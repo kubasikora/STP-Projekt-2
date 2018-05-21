@@ -1,0 +1,162 @@
+\documentclass[a4paper,titlepage,11pt,floatssmall]{mwrep}
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[OT1]{fontenc}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{rotating}
+\usepackage{pgfplots}
+\usetikzlibrary{pgfplots.groupplots}
+
+\usepackage{siunitx}
+
+\usepackage{float}
+\definecolor{szary}{rgb}{0.95,0.95,0.95}
+\sisetup{detect-weight,exponent-product=\cdot,output-decimal-marker={,},per-mode=symbol,binary-units=true,range-phrase={-},range-units=single}
+
+\SendSettingsToPgf
+\title{\bf Sprawozdanie z projektu nr 2\\ Zadanie nr 2.38  \vskip 0.1cm}
+\author{Jakub Sikora \and nr albumu 283418}
+\date{\today}
+\pgfplotsset{compat=1.15}	
+\begin{document}
+
+
+\makeatletter
+\renewcommand{\maketitle}{\begin{titlepage}
+		\begin{center}{\LARGE {\bf
+					Wydział Elektroniki i Technik Informacyjnych}}\\
+			\vspace{0.4cm}
+			{\LARGE {\bf Politechnika Warszawska}}\\
+			\vspace{0.3cm}
+		\end{center}
+		\vspace{5cm}
+		\begin{center}
+			{\bf \LARGE Sterowanie procesami \vskip 0.1cm}
+		\end{center}
+		\vspace{1cm}
+		\begin{center}
+			{\bf \LARGE \@title}
+		\end{center}
+		\vspace{2cm}
+		\begin{center}
+			{\bf \Large \@author \par}
+		\end{center}
+		\vspace*{\stretch{6}}
+		\begin{center}
+			\bf{\large{Warszawa, \@date\vskip 0.1cm}}
+		\end{center}
+	\end{titlepage}
+	}
+\makeatother
+\maketitle
+
+\tableofcontents
+
+
+% pierwsza sekcja
+\chapter{Model procesu }
+Rozważany w ramach projektu proces jest opisany następującą transmitancją:
+
+\begin{equation*}
+G(s) = \frac{K_0 e^{-T_0 s}}{(T_1 s + 1)(T_2 s + 1)}
+\end{equation*} 
+\medskip
+gdzie $K_0 = 4,3$, $T_0 = 5$, $T_1 = 1,85$ i  $T_2 = 5,35$.\\
+Proces ten jest stabilny asymptotycznie, ponieważ oba jego zera mają ujemną część rzeczywistą.
+
+$$
+\left[\begin{array}{c}
+s_{01} \\
+s_{02} \\
+\end{array} \right]
+= 
+\left[\begin{array}{c}
+-0,5405	\\
+-0,1869 \\
+\end{array} \right]
+$$
+
+Oprócz dużych stałych czasowych, obiekt ten zawiera człon opóźniający. Znacząco utrudnia to skuteczną regulację tym obiektem.
+
+\chapter{Zadania projektowe}
+\section{Transmitancja dyskretna}
+Przed przystąpieniem do projektowania regulatorów, wyznaczyłem transmitancję dyskretną $G(z)$ badanego procesu. Zgodnie z poleceniem przyjąłem okres próbkowania $T_p = 0,5s$. Do wyznaczenia transmitancji dyskretnej posłużyłem się ekstrapolatorem zerowego rzędu według którego transmitancja dyskretna ma następującą postać:
+
+\begin{equation*}
+G(z) = \frac{z-1}{z} \mathcal{Z} \bigg\{ \mathcal{L}^{-1} \bigg\{ \frac{G(s)}{s} \bigg\} \bigg\}  
+\end{equation*}
+
+W matlabie istnieje polecenie \texttt{c2d} do wyznaczania transmitancji dyskretnej na podstawie transmitancji ciągłej. Polecenie to wykorzystałem w skrypcie o nazwie \texttt{zad1.m}. Za jego pomocą uzyskałem następującą transmitancję dyskretną:
+
+\begin{equation*}
+G(z) = z^{-10}\frac{0,04818z^{-1} + 0,04268z^{-2}}{1 - 1,674z^{-1} + 0,6951z^{-2}}
+\end{equation*} 
+
+Uzyskana transmitancja ma zera w $z_{01} = 0.9108$ i w $z_{02} = 0.7632$ co jest zgodne z oczekiwaniami. Obiekt opisany transmitancją dyskretną powinien być stabilny tak jak obiekt opisany transmitancją ciągłą. Wszystkie zera $G(z)$ znajdują się w kole jednostkowym, co świadczy o asymptotycznej stabilności procesu.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.8\textwidth]{../figures/zad1_cont_disc_comp.pdf}
+\caption{Odpowiedzi skokowe transmitancji dyskretnej i ciągłej}
+\end{figure}
+
+\newpage
+
+Współczynnik wzmocnienia statycznego transmitancji ciągłej można uzyskać obliczając granicę:
+\begin{equation*}
+K_{stat_{c}} = \lim_{s\to 0} G(s) 
+\end{equation*} 
+
+Analogicznie, współczynnik wzmocnienia statycznego transmitancji dyskretnej uzyskujemy obliczając granicę:
+\begin{equation*}
+K_{stat_{d}} = \lim_{z\to 1} G(z)
+\end{equation*}
+
+Korzystając z otrzymanej transmitancji ciągłej otrzymałem $K_{stat_{c}} = 4.3$, natomiast korzystając z transmitancji dyskretnej obliczonej z matlaba również otrzymałem $K_{stat_{d}} = 4,3$. Wzmocnienia te są toższame z dokładnością do błędów numerycznych. Tożsamość dwóch współczynników była oczekiwana i tylko potwierdza zgodność obu opisów jednego procesu dynamicznego.
+
+\section{Równanie różnicowe}
+Znając transmitancję dyskretną, z łatwością można wyznaczyć równanie różnicowe opisujące obiekt postaci:
+
+\begin{equation*}
+y[k] = \sum_{i=1}^{n}b_{i}y[k - i] + \sum_{i=1}^{m}c_{i}u[k - i]
+\end{equation*}
+
+Odwołując się do definicji transmitancji:
+\begin{equation*}
+G(z) = \frac{Y(z)}{U(z)} = z^{-10}\frac{0,04818z^{-1} + 0,04268z^{-2}}{1 - 1,674z^{-1} + 0,6951z^{-2}}
+\end{equation*}
+
+Mnożąc wyrażenie na krzyż otrzymałem:
+\begin{equation*}
+z^{-10}(0,04818z^{-1} + 0,04268z^{-2})U(z) =  (1 - 1,674z^{-1} + 0,6951z^{-2})Y(z)
+\end{equation*}
+
+Dalej:
+\begin{equation*}
+0,04818z^{-11}U(z) + 0,04268z^{-12}U(z) = Y(z) - 1,674z^{-1}Y(z) + 0,6951z^{-2}Y(z)
+\end{equation*}
+
+Następnym krokiem jest zastosowanie odwrotnej transformaty $\mathcal{Z}$:
+\begin{equation*}
+0,04818u[k-11] + 0,04268u[k-12] = y[k] - 1,674y[k-1] + 0,6951y[k-2]
+\end{equation*}
+
+Ostatecznie po uporządkowaniu wyrazów otrzymałem następujące równanie różnicowe:
+\begin{equation*}
+y[k] = 1,674y[k-1] - 0,6951y[k-2] + 0,04818u[k-11] + 0,04268u[k-12]  
+\end{equation*}
+
+\newpage
+
+
+
+
+
+
+  
+
+\end{document}

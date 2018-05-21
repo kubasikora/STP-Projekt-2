@@ -16,6 +16,7 @@ discrete = c2d(G, Tp, 'zoh');
 % Wypisanie transmitancji dyskretnej
 discrete
 
+
 % Rysowanie wykresu
 fig = figure('Name', 'Porównanie odpowiedzi skokowych transmitancji ci¹g³ej i dyskretnej');
 set(gcf, 'Position', [100, 100, 800, 600])
