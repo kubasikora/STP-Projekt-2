@@ -1,8 +1,12 @@
-% STP - Projekt 1 - Zadanie 38 - Jakub Sikora
+% STP - Projekt 2 - Zadanie 38 - Jakub Sikora
 % Wyznaczanie transmitancji dyskretnej przy wykorzystaniu pakietu Matlab
 
 % Dane zadania 
-load_params
+K0 = 4.3;
+T0 = 5;
+T1 = 1.85;
+T2 = 5.35;
+
 Tp = 0.5;
 s = tf('s');
 G = (K0 * exp(-s*T0))/((T1*s + 1)*(T2*s +1));
