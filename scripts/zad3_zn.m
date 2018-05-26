@@ -7,15 +7,17 @@ u=zeros(1,250);
 e=zeros(1,250);
 k = 13;
 
-K_reg = 0.08555; % eksperymentalnie wyznaczona wartoœæ wzmocnienia krytycznego
+
+K_reg = 0.0034;
+
+r1 = K_reg;
 
 for i=1:238
-e(k) = y_zad - y(k-1);
-u(k) = K_reg*e(k);
-y(k) = 1.674*y(k-1) - 0.6951*y(k-2) + 0.4818*u(k-11) + 0.04268*u(k-12);
-k = k + 1;
+    e(k) = y_zad - y(k-1);
+    u(k) = u(k-1) + r1*e(k) ;
+    y(k) = 1.674*y(k-1) - 0.6951*y(k-2) + 0.4818*u(k-11) + 0.04268*u(k-12);
+    k = k + 1;
 end
-
 
 t = linspace(1,250,250);
 hold on
