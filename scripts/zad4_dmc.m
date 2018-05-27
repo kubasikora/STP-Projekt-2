@@ -1,5 +1,16 @@
 clear
 
+%Dane regulatora
+kk = 500;
+y_zad = zeros(1,kk);
+y_zad(13:kk) = 1;
+du = zeros(1,kk);
+N = 20;
+Nu = 1;
+lambda = 1;
+D = 80;
+
+
 %Wyznaczenie odpowiedzi skokowej
 K0 = 4.3;
 T0 = 5;
@@ -11,22 +22,10 @@ s = tf('s');
 Gs = (K0 * exp(-s*T0))/((T1*s + 1)*(T2*s +1));
 Gz = c2d(Gs, Tp, 'zoh');
 
-odp_skok = step(Gz, 0:Tp:100);
-
-%Dane regulatora
-kk = 500;
-y_zad = zeros(1,kk);
-y_zad(13:kk) = 1;
-du = zeros(1,kk);
-N = 25;
-Nu = 10;
-lambda = 100;
-D = 80;
-
-
+odp_skok = step(Gz, 0:Tp:1.5*D);
 
 y_zad = zeros(1,kk);
-y_zad(80:kk) = 1;
+y_zad(D:kk) = 1;
 y=zeros(1,kk);
 u=zeros(1,kk);
 
@@ -60,7 +59,7 @@ K = (M'*M + lambda*eye(Nu))^-1 * M';
 K1 = K(1,1:N);
 ke = sum(K1);
 
-for k=80:kk
+for k=D:kk
     y(k) = 1.674*y(k-1) - 0.6951*y(k-2) + 0.04818*u(k-11) + 0.04268*u(k-12);
     swob = 0;
     for j=1:(D-1)
@@ -86,3 +85,5 @@ ylabel('Wartoœci sygna³ów');
 title('Regulator DMC');
 hold off
 
+name = strcat('figures\zad5_dmc_l_', strrep(num2str(lambda), '.', ','), '_N_', num2str(N), '_Nu_', num2str(Nu), '_D_', num2str(D));
+print_figure(name, '..\figures')

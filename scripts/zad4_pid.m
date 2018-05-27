@@ -51,7 +51,7 @@ name = strcat('figures\zad4_pid_zn');
 print_figure(name, '..\figures')
 
 % Poprawiony pid
-kk = 150;
+kk = 500;
 K_reg = 0.19;
 T_i = 8.4;
 T_d = 2.13;
