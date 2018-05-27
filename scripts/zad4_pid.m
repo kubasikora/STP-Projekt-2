@@ -1,5 +1,5 @@
-K_kryt = 0.0034;
-T_k = 47;
+K_kryt = 0.5125;
+T_k = 20.5;
 Tp = 0.5;
 
 % Pid uzyskany z eksperymentu
@@ -11,22 +11,30 @@ T_d = 0.12*T_k;
 r1 = K_reg*(1 + Tp/(2*T_i) + T_d/Tp);
 r2 = K_reg*(Tp/(2*T_i) - 2*T_d/Tp - 1);
 r3 = K_reg*T_d/Tp;
+kk = 1000;
 
-y_zad = zeros(1,250);
-y_zad(13:250) = 1;
-y=zeros(1,250);
-u=zeros(1,250);
-e=zeros(1,250);
-k = 13;
+y_zad = zeros(1,kk);
+y_zad(13:kk) = 1;
+y=zeros(1,kk);
+u=zeros(1,kk);
+e=zeros(1,kk);
 
-for i=1:238
-e(k) = y_zad(k) - y(k-1);
-u(k) = u(k-1) + r1*e(k) + r2*e(k-1) + r3*e(k-2);
-y(k) = 1.674*y(k-1) - 0.6951*y(k-2) + 0.04818*u(k-11) + 0.04268*u(k-12);
-k = k + 1;
+
+disp('Nastawy regulatora uzyskanego za pomoc¹ eksperymentu Z-N:')
+
+disp(strcat('Wartoœæ K: ', num2str(K_reg)));
+disp(strcat('Wartoœæ Ti: ', num2str(T_i)));
+disp(strcat('Wartoœæ Td: ', num2str(T_d)));
+
+for k=13:kk
+    y(k) = 1.674*y(k-1) - 0.6951*y(k-2) + 0.04818*u(k-11) + 0.04268*u(k-12);
+    e(k) = y_zad(k) - y(k);
+    u(k) = u(k-1) + r1*e(k) + r2*e(k) +r3*e(k);
 end
+
+
 fig1 = figure;
-t = linspace(1,250,250);
+t = linspace(1,kk,kk);
 hold on
 plot(t, y_zad, 'g');
 stairs(t, u, 'b');
@@ -43,7 +51,7 @@ name = strcat('figures\zad4_pid_zn');
 print_figure(name, '..\figures')
 
 % Poprawiony pid
-
+kk = 150;
 K_reg = 0.19;
 T_i = 8.4;
 T_d = 2.13;
@@ -53,23 +61,28 @@ r2 = K_reg*(Tp/(2*T_i) - 2*T_d/Tp - 1);
 r3 = K_reg*T_d/Tp;
 
 
-y_zad = zeros(1,250);
-y_zad(13:250) = 1;
-y=zeros(1,250);
-u=zeros(1,250);
-e=zeros(1,250);
-k = 13;
+y_zad = zeros(1,kk);
+y_zad(13:kk) = 1;
+y=zeros(1,kk);
+u=zeros(1,kk);
+e=zeros(1,kk);
 
-for i=1:238
+
+for k=13:kk
 e(k) = y_zad(k) - y(k-1);
 u(k) = u(k-1) + r1*e(k) + r2*e(k-1) + r3*e(k-2);
 y(k) = 1.674*y(k-1) - 0.6951*y(k-2) + 0.04818*u(k-11) + 0.04268*u(k-12);
-k = k + 1;
 end
+
+disp('Nastawy poprawionego regulatora:')
+
+disp(strcat('Wartoœæ K: ', num2str(K_reg)));
+disp(strcat('Wartoœæ Ti: ', num2str(T_i)));
+disp(strcat('Wartoœæ Td: ', num2str(T_d)));
 
 
 fig2 = figure;
-t = linspace(1,250,250);
+t = linspace(1,kk,kk);
 hold on
 plot(t, y_zad, 'g');
 stairs(t, u, 'b');
