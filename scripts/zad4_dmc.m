@@ -1,3 +1,6 @@
+% STP - Projekt 2 - Zadanie 38 - Jakub Sikora
+% Symulacja regulatora DMC
+
 clear
 
 %Dane regulatora

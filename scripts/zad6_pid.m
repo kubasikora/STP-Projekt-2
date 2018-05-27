@@ -1,3 +1,6 @@
+% STP - Projekt 2 - Zadanie 38 - Jakub Sikora
+% Wyznaczanie obszaru stabilnoœci regulatora PID
+
 T_mn = 1.3;
 K_mn = 2.2468;
 

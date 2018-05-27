@@ -1,3 +1,6 @@
+% STP - Projekt 2 - Zadanie 38 - Jakub Sikora
+% Symulacja regulatora PID
+
 K_kryt = 0.5125;
 T_k = 20.5;
 Tp = 0.5;

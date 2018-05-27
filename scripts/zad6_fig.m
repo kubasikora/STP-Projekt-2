@@ -1,3 +1,6 @@
+% STP - Projekt 2 - Zadanie 38 - Jakub Sikora
+% Rysowanie obszarów stabilnoœci obu regulatorów na wykresie
+
 hold on
 xlim([1.0 2.0]);
 fig1 = area(data6_dmc(1,:), data6_dmc(2,:));

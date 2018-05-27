@@ -1,5 +1,6 @@
 % STP - Projekt 2 - Zadanie 38 - Jakub Sikora
 % Eksperyment Zieglera Nicholsa
+
 kk = 250;
 
 y_zad = zeros(1,kk);

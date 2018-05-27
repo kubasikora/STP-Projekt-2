@@ -1,3 +1,7 @@
+% STP - Projekt 2 - Zadanie 38 - Jakub Sikora
+% Wyznaczanie obszaru stabilnoœci regulatora DMC
+
+
 T_mn = 1;
 K_mn = 0.45587;
 
