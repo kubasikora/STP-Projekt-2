@@ -32,7 +32,7 @@ cont = step(G,  t);
 disc = step(discrete, t);
 plot(t, cont);
 stairs(t, disc);
-legend('Model ci¹g³y', 'Model dyskretny', 'Location', 'northeast');
+legend('Model ci¹g³y', 'Model dyskretny', 'Location', 'southeast');
 title('Odpowiedzi skokowe transmitancji ci¹g³ej i dyskretnej', 'FontName', 'Helvetica');
 xlabel('Czas t');
 ylabel('Wyjœcie modelu y');

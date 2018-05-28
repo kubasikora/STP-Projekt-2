@@ -113,10 +113,9 @@ r3 = K_reg*T_d/Tp;
 
 
 y_zad = zeros(1,kk);
-y_zad(13:kk) = 1;
-y_zad(120:kk) = 2;
-y_zad(300:kk) = 0;
-y_zad(400:kk) = 1;
+y_zad(80:kk) = 1;
+y_zad(200:kk) = 2;
+y_zad(400:kk) = 0;
 y=zeros(1,kk);
 u=zeros(1,kk);
 e=zeros(1,kk);

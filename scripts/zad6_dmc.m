@@ -2,8 +2,8 @@
 % Wyznaczanie obszaru stabilnoœci regulatora DMC
 
 
-T_mn = 1;
-K_mn = 0.45587;
+T_mn = 1.8;
+K_mn = 0.8;
 
 
 %Dane regulatora
@@ -11,8 +11,8 @@ kk = 2000;
 y_zad = zeros(1,kk);
 y_zad(13:kk) = 1;
 du = zeros(1,kk);
-N = 20;
-Nu = 1;
+N = 30;
+Nu = 2;
 lambda = 1;
 D = 80;
 

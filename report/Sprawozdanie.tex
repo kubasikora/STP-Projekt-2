@@ -247,7 +247,7 @@ Po uzyskaniu nastawów, przetestowałem ten regulator badając jak zachowa się 
 
 \bigskip
 
-Jak widać na rysunku 2.5, w układzie regulacji występują duże oscylacje, dodatkowo występuje bardzo duże przeregulowanie wielkości 70 \% skoku sterowania. Dzieje się tak ponieważ regulatory uzyskane za pomocą tej metody mają tendencję do generowania przebiegów oscylacyjnych. Ważnym elementem dobierania regulatora metodą Zieglera-Nicholsa jest ręczne strojenie nastawów.
+Jak widać na rysunku 2.5, w układzie regulacji występują duże oscylacje, dodatkowo występuje bardzo duże przeregulowanie wielkości 70 \% skoku sterowania. Dzieje się tak ponieważ regulatory uzyskane za pomocą tej metody mają tendencję do generowania przebiegów oscylacyjnych. Dodatkowo, proces regulacji jest utrudniony przez opóźnienie występujące w obiekcie. Ważnym elementem dobierania regulatora metodą Zieglera-Nicholsa jest ręczne strojenie nastawów.
 
 Ręcznie dostrojone nastawy regulatora PID:
 
@@ -287,7 +287,7 @@ $\min_{\Delta u} = \bigg( \sum_{i=1}^{N}(y_{k+i|k}^{zad} - y_{k+i|k})^2 + \sum_{
 
 \end{center}
 
-W regulatorze DMC przewidywany jest wektor optymalnych sterowań na $N_u$ chwil w przód. Wartość $N_u$ nazywana jest horyzontem sterowania. Wektor ten obliczany jest na podstawie wartości zadanej, aktualnej wartości wyjścia procesu i zmianach sterowania w ostatnich $D-1$ chwilach dyskretnych. Wartość $D$ nazywana jest horyzontem dynamiki. Jego wartość mówi ile próbek dyskretnych musi minąć aby ustaliła się odpowiedź skokowa sterowanego obiektu działającego poza układem regulacji. Wartość wyjść jest przewidywana na $N$ chwil w przód. Wartość $N$ nazywana jest horyzontem predykcji i mówi o tym na ile chwil w przód przewidywane jest wyjście procesu a co za tym idzie ile próbek jest branych do zadania minimalizacji.\\
+W regulatorze DMC przewidywany jest wektor optymalnych sterowań na $N_u$ chwil w przód. Wartość $N_u$ nazywana jest horyzontem sterowania. Wektor ten obliczany jest na podstawie wartości zadanej, aktualnej wartości wyjścia procesu i zmianach sterowania w ostatnich $D-1$ chwilach dyskretnych. Wartość $D$ nazywana jest horyzontem dynamiki. Jego wartość mówi ile próbek dyskretnych musi minąć aby ustaliła się odpowiedź skokowa sterowanego obiektu działającego poza układem regulacji. Wartość wyjść jest przewidywana na $N$ chwil w przód. Wartość $N$ nazywana jest horyzontem predykcji i mówi o tym na ile chwil w przód przewidywane jest wyjście procesu a co za tym idzie ile próbek jest branych do zadania minimalizacji Ostatnim parametrem jest $\lambda$. Ogranicza on zmienność sygnału sterującego. Im jest on większy tym bardziej łagodne przebiegi ma sygnał sterujący.\\
 \newpage
 
 Znając model procesu można z łatwością wyznaczyć prawo regulacji. Zanim jednak to nastąpi należy wyznaczyć dwie macierze związane z modelem. Pierwsza z nich to macierz skróconych odpowiedzi skokowych:
@@ -352,6 +352,290 @@ Cały algorytm regulacji DMC został zaimplementowany w skrypcie \texttt{/script
 
 
 \section{Badanie parametrów regulatora DMC}
+\subsection{Horyzont dynamiki}
+Pierwszym badanym przeze mnie parametrem jest horyzont dynamiki $D$. Parametr ten wyznacza się na podstawie odpowiedzi skokowej obiektu. Opisuje on ile dyskretnych chwil czasu zajmuje obiektowi do ustabilizowania swojej odpowiedzi skokowej.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/zad5_disc_odp_skok.pdf}
+\caption{Dyskretna odpowiedź skokowa obiektu}
+\end{figure}
+
+Na podstawie rysunku 2.9 określiłem ze odpowiedź skokowa ustala się po 40s od momentu skoku sterowania. Przy czasie próbkowania $T_p = 0,5s$ daje 80 dyskretnych próbek. Dlatego też wyznaczony horyzont dynamiki $D = 80$. W kolejnych eksperymentach założyłem że $N_u = N = D = 80$.
+\newpage
+\subsection{Horyzont predykcji}
+Horyzont predykcji jest parametrem który określa na ile chwil wprzód algorytm ma obliczać wyjście procesu. W ramach badań stopniowo zmniejszałem horyzont predykcji i towarzyszący mu horyzont sterowania.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.81\textwidth]{../figures/zad5_dmc_l_1_N_80_Nu_80_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 80$, $N_{u} = 80$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.81\textwidth]{../figures/zad5_dmc_l_1_N_70_Nu_70_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 70$, $N_{u} = 70$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_60_Nu_60_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 60$, $N_{u} = 60$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_40_Nu_40_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 40$, $N_{u} = 40$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_20_Nu_20_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 20$, $N_{u} = 20$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_15_Nu_15_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 15$, $N_{u} = 15$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_12_Nu_12_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 12$, $N_{u} = 12$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_10_Nu_10_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 10$, $N_{u} = 10$}
+\end{figure}
+
+Tak jak widać na rysunkach 2.10 - 2.14, zmniejszanie horyzontu predykcji nie wpływa na jakość regulacji. Dopiero gdy horyzont predykcji przekroczy pewną wartość graniczną (w tym przypadku $N = 20$), jakość regulacji znacząco pogarsza się. Przebiegi zaczynają przyjmować charakter mocno oscylacyjny, pojawiają się duże przeregulowania. W przypadku krytycznym w którym długość horyzontu predykcji jest równa dyskretnemu opóźnieniu obiektu, regulator przestaje pracować. Im dłuższy jest horyzont predykcji tym większe zyski z opytmalizacji sterowania ale też dłuższe są obliczenia algorytmu ponieważ macierze modelu zwiększają swój wymiar. Dlatego w tym przypadku dobrze jest przyjąć wyznaczoną wartość graniczną parametru $N$. Na potrzeby dalszych eksperymentów zdecydowałem się na przyjęcie $N = 30$. 
+
+\subsection{Horyzont sterowania}
+Horyzont sterowania $N_u$ opisuje na ile chwil w przód obliczana jest wartość sygnału sterującego. Podobnie jak w przypadku horyzontu predykcji, zdecydowałem się na zbadanie jak ten parametr wpływa na jakość regulacji, stopniowo zmniejsząjąc jego wartość. 
+
+\bigskip
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_30_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 25$}
+\end{figure}
+
+\newpage
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_25_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 25$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_20_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 20$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_15_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 15$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_10_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 10$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_5_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 5$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_3_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 3$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 20$, $N_{u} = 2$}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_1_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 1$}
+\end{figure}
+\newpage
+
+Jak widać na rysunkach 2.18 - 2.26, zmniejszenie horyzontu sterowania sprawia że przebiegi wyjścia są mocniej tłumione, oscylacje nie są już tak widoczne. Najlepszy rezultat uzyskałem dla $N_u = 1$. W ramach regulacji predykcyjnej do generacji zmiany sterowania brane są pod uwagę przyszłe zmiany sterowania. W przypadku obiektów z opóźnieniem, takie rozwiązanie może generować widoczne oscylacje, jednak poprzez przyjęcie $N_u = 1$ tracimy predykcyjne możliwości regulatora, dlatego też do regulacji tego obiektu zdecydowałem się przyjąć $N_u = 2$. Widoczne oscylacje postaram się zlikwidować przy pomocy parametru $\lambda$
+
+\subsection{Współczynnik członu kary}
+W raz ze zmianą parametru $\lambda$ zwanego współczynnikiem wagowym członu kary, zmienia się trajektoria sygnału sterującego. Im większy parametr $\lambda$ tym łagodniejsze są przebiegi.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+\newpage
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_10_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 10$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_100_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 100$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_1000_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 1000$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_10000_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 10000$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+
+Na podstawie rysunków 2.27 - 2.31 można ocenić że optymalną wartością parametru $\lambda$ jest $\lambda = 1000$. Przebieg sygnału sterującego jest gładki i łagodny, w dodatku sygnał wyjściowy szybko nadąża za wartością zadaną. Za duża wartość tego parametru paraliżuje sygnał sterujący co powoduje że czas regulacji jest bardzo długi.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_0,1_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 0.1$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_0,01_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 0.01$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_0,001_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 0.001$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.85\textwidth]{../figures/zad5_dmc_l_0,0001_N_30_Nu_2_D_80.pdf}
+\caption{Regulator DMC - $\lambda = 0.0001$, $N = 30$, $N_{u} = 2$}
+\end{figure}
+\newpage
+
+W przypadku zmniejszania parametru $\lambda$ można dostrzec zmianę charakteru sygnału sterującego. W tym przypadku zmienia się on bardzo gwałtownie, jednak nie niesie to żadnych wymiernych korzyści gdyż czasy regulacji procesu są porównywalne z tym osiągniętym przy $\lambda = 1000$, dlatego też ostatecznie zastosowałbym tą wartość. Dla niej osiągnąłem kompromis pomiędzy szybkością regulacji a żądaną postacią sygnału sterującego.
+
+\section{Porównanie regulatorów}
+
+Zanim porównam oba regulatory, przypomnę ich parametry
+
+\subsubsection{Regulator PID}
+
+\begin{center}
+	$K_p = 0,19$ \\
+	$T_i = 8,4$ \\
+	$T_d = 2,13$ \\
+\end{center}
+
+W wersji dyskretnej:
+
+\begin{center}
+	$r_1 = 1,0051$ \\  
+	$r_2 = -1,8031$ \\ 
+	$r_3 = 0,8094$ \\
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.90\textwidth]{../figures/zad4_pid_zn_popr_zmienne_y_zad.pdf}
+\caption{Odpowiedź układu z regulatorem PID na zmienną wartość zadaną.}
+\end{figure}
+\newpage
+
+\subsubsection{Regulator DMC}
+\begin{center}
+	$D = 80$ \\
+	$N = 30$ \\
+	$N_u = 2$ \\
+	$\lambda = 1000$\\
+\end{center}
+
+\bigskip
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.90\textwidth]{../figures/zad5_dmc_l_1000_N_30_Nu_2_D_80_3sk.pdf}
+\caption{Odpowiedź układu z regulatorem DMC na zmienną wartość zadaną.}
+\end{figure}
+
+
+\newpage
+
+\subsubsection{Porównanie przebiegów}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/zad6_y_comp.pdf}
+\caption{Porównanie przebiegów sygnałów wyjściowych.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/zad6_u_comp.pdf}
+\caption{Porównanie przebiegów sygnałów sterujących.}
+\end{figure}
+\newpage
+
+Zgodnie z rysunkiem 2.38, widać że regulator PID działa w tym wypadku szybciej niż jego predykcyjny odpowiednik. Czas regulacji obiektu w układzie regulacji z regulatorem PID wynosi $t_{r_{PID}} = 15s$ a w przypadku regulatora DMC $t_{r_{DMC}} = 22,5s$. Wyjście w układzie regulacji PID jest bardziej strome. Świadczą o tym czasy narastania gdzie $t_{n_{PID}} = 8s$ i $t_{n_{DMC}} = 11s$. W przypadku regulatora PID występuje niewielkie ujemne przeregulowanie na poziomie $1-2\%$ natomiast w regulator DMC nie generuje przeregulowań.\\
+
+\indent Bardzo interesujące są przebiegi sygnału sterującego w obu układach regulacji znajdujące się na rysunku 2.39. W przypadku układu regulacji z regulatorem PID, sygnał sterujący zmienia się w bardzo gwałtowny sposób, generując charakterystyczne piki w momentach gdy wartość zadana zmienia się. W przypadku układu regulacji z regulatorem DMC, sygnał sterujący zmienia się w sposób bardzo łagodny. Jakość regulacji z tym regulatorem można spróbować jeszcze bardziej poprawić stosując zmienną trajektorię zadaną przy obliczaniu wektora sterowań. 
+
+\subsubsection{Obszary stabilności}
+
+W trakcie porównywania obu regulatorów, warto sprawdzić jak wrażliwe są one na zmianę parametrów procesu. W ostatnim eksperymencie sprawdziłem w jakim zakresie może zmieniać się wzmocnienie obiektu w funkcji zmiennego opóźnienia. Eksperyment ten przeprowadziłem najpierw zmieniając opóźnienie obiektu a następnie zwiększałem wzmocnienie tak aby doprowadzić obiekt do granicy stabilności. Dodatkowo, w celu prezentacji ciekawych efektów dotyczących regulatora DMC zmieniłem jego parametry na poniższe: 
+\begin{center}
+	$D = 80$ \\
+	$N = 20$ \\
+	$N_u = 1$ \\
+	$\lambda = 1$\\
+\end{center}
+
+Uzyskane wyniki znajdują się rysunkach poniżej. Kolorem niebieskim zaznaczyłem obszary w których regulatory są niestabilne.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/pid6_area.pdf}
+\caption{Obszar stabilności regulatora PID - kolor niebieski obszar niestabilny}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/dmc6_area.pdf}
+\caption{Obszar stabilności regulatora DMC - kolor niebieski obszar niestabilny}
+\end{figure}
+
+Na podstawie rysunku 2.40 można stwierdzić że regulator PID jest wrażliwy na rosnące wzmocnienia. Im bardziej rośnie opóźnienie, tym mniejsze jest maksymalne dopuszczalne wzmocnienie obiektu.\\
+
+W przypadku regulatora DMC, sytuacja jest zupełnie odmienna. Regulator ten jest wrażliwy na spadek nominalnego wzmocnienia obiektu. Dodatkowo, w przypadku zwiększenia opóźnienia do poziomu porównywalnemu z horyzontem predykcji, regulator zupełnie przestaje pracować. Efekt ten można zniwelować poprzez zwiększenie horyzontu predykcji.
 
 
 
