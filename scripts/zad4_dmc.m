@@ -24,6 +24,13 @@ Tp = 0.5;
 s = tf('s');
 Gs = (K0 * exp(-s*T0))/((T1*s + 1)*(T2*s +1));
 Gz = c2d(Gs, Tp, 'zoh');
+u=zeros(1,kk);
+u(13:kk) = 1;
+y=zeros(1,kk);
+
+for k =13:kk
+    y(k) = 1.674*y(k-1) - 0.6951*y(k-2) + 0.04818*u(k-11) + 0.04268*u(k-12);
+end
 
 odp_skok = step(Gz, 0:Tp:1.5*D);
 

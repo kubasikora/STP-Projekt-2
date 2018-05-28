@@ -153,12 +153,206 @@ y[k] = 1,674y[k-1] - 0,6951y[k-2] + 0,04818u[k-11] + 0,04268u[k-12]
 \newpage
 
 \section{Regulator PID}
-W ramach następnego zadania wykonałem eksperyment Zieglera-Nicholsa w celu doboru odpowiednich nastawów regulatora PID.
+W ramach następnego zadania wykonałem eksperyment Zieglera-Nicholsa w celu doboru odpowiednich nastawów regulatora PID. Eksperyment ten polega na znalezieniu takiego wzmocnienia regulatora P, który sprawi że obiekt przez niego sterowany znajdzie się na granicy stabilności. Wzmocnienie to nazywamy \emph{wzmocnieniem krytycznym}. Odpowiedzią obiektu znajdującego się na granicy stabilności na skok jednostkowy są niegasnące oscylacje. Poszukiwanym przez nas parametrem jest okres tych oscylacji. Znając okres oscylacji i wzmocnienie krytyczne, można wyznaczyć nastawy regulatora PID korzystając z tabelki.
+\medskip
+\begin{center}
+\begin{tabular}{|c|c|c|c|} \hline
+Regulator & $K$ & $T_i$ & $T_d$ \\
+\hline \hline
+P & $0,5K_u$ & - & -\\
+\hline
+PI & $0,45K_u$ & $0,83T_u$ & - \\
+\hline
+PID & $0,6K_u$ & $0,5T_u$ & $0,12T_u$ \\
+\hline 
+\end{tabular}\\
+Tabela 2.1 Nastawy regulatorów P, PI, PID.
+\end{center}
+\bigskip
+Eksperyment Z-N wykonałem za pomocą skryptu \texttt{/scripts/zad3\_{}zn.m}. 
+Wzmocnienie krytyczne wyznaczałem iteracyjnie. Jeśli na skok jednostkowy, proces odpowiadał gasnącymi oscylacjami, oznaczało to że aktualne wzmocnienie jest za małe. Na rysunku poniżej znajduje się odpowiedź obiektu z regulatorem typu P z wzmocnieniem $K_p = 0,4$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/zad3_zn_exp_too_small.pdf}
+\caption{Za małe wzmocnienie regulatora P - gasnące oscylacje}
+\end{figure}
+
+\newpage
+Przy zwiększaniu wzmocnienia, istniało ryzyko że możemy przekroczyć granicę stabilności. Objawiało się to rosnącymi oscylacjami.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/zad3_zn_exp_too_big.pdf}
+\caption{Za duże wzmocnienie regulatora P - rosnące oscylacje}
+\end{figure}
+
+Ostatecznie udało mi się dobrać odpowiednie wzmocnienie krytyczne które równe jest $K_u = 0,5125$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/zad3_zn_exp.pdf}
+\caption{Wzmocnienie krytyczne - obiekt na granicy stabilności}
+\end{figure}
+
+\newpage
+
+Okres oscylacji przebiegu z rysunku 2.4 wynosi 41 próbek. Okres ten znalazłem odczytując ile próbek dzieli poszczególne wierzchołki sinusoidy i mnożąc tą ilość przez czas próbkowania. Ostatecznie $T_u = 20,5s$.
+
+Znając wyniki eksperymentu Zieglera-Nicholsa można w prosty sposób obliczyć nastawy regulatora. Podstawiając do wzorów z tabeli 2.1, uzyskałem:
+
+\begin{center}
+	$K_p = 0,3075$ \\
+	
+	$T_i = 10,25$ \\
+
+	$T_d = 2,46$ \\
+\end{center}
+
+Uzyskane nastawy dotyczą ciągłego układu regulacji opisanego wzorem:
+\begin{equation*}
+u(t) = K_p\bigg(e(t) + \int_{0}^{t}e(\tau)d\tau + \frac{de(t)}{dt}\bigg)
+\end{equation*}
+
+Dyskretny układ regulacji PID opisany jest wzorem:
+\begin{equation*}
+u[k] = u[k-1] + r_1e[k] + r_2e[k-1] + r_3e[k-2]
+\end{equation*}
+
+Relację łączącą układ ciągły i dyskretny wyznaczają wzory:
+\begin{center}
+	$r_1 = K_p\bigg(1 + \frac{T_p}{2T_i} + \frac{T_d}{T_p}\bigg)$ \\
+	
+	$r_2 = K_p\bigg(\frac{T_p}{2T_i} - \frac{2T_d}{T_p} - 1 \bigg)$\\
+
+	$r_3 = K_p\frac{T_d}{T_p}$ \\
+\end{center}
+
+Po podstawieniu do wzorów otrzymałem:
+\begin{center}
+	$r_1 = 1,8279$ \\
+	
+	$r_2 = -3,3258$ \\
+
+	$r_3 = 1,5129$ \\
+\end{center}
+
+Po uzyskaniu nastawów, przetestowałem ten regulator badając jak zachowa się układ regulacji po pobudzeniu go skokiem jednostkowym.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.80\textwidth]{../figures/zad4_pid_zn.pdf}
+\caption{Odpowiedź układu z regulatorem uzyskanym za pomocą eksperymentu Z-N}
+\end{figure}
+
+\bigskip
+
+Jak widać na rysunku 2.5, w układzie regulacji występują duże oscylacje, dodatkowo występuje bardzo duże przeregulowanie wielkości 70 \% skoku sterowania. Dzieje się tak ponieważ regulatory uzyskane za pomocą tej metody mają tendencję do generowania przebiegów oscylacyjnych. Ważnym elementem dobierania regulatora metodą Zieglera-Nicholsa jest ręczne strojenie nastawów.
+
+Ręcznie dostrojone nastawy regulatora PID:
+
+\begin{center}
+	$K_p = 0,19$ \\
+	$T_i = 8,4$ \\
+	$T_d = 2,13$ \\
+\end{center}
+
+W użytecznej wersji dyskretnej:
+
+\begin{center}
+	$r_1 = 1,0051$ \\  
+	$r_2 = -1,8031$ \\ 
+	$r_3 = 0,8094$ \\
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.90\textwidth]{../figures/zad4_pid_zn_popr.pdf}
+\caption{Odpowiedź układu z ręczniem dostrojonym regulatorem}
+\end{figure}
+\newpage 
+Regulator ten bardzo dobrze reaguje na zmiany wartości zadanej. Charakteryzuje się jednak gwałtownymi zmianami sterowania.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.90\textwidth]{../figures/zad4_pid_zn_popr_zmienne_y_zad.pdf}
+\caption{Odpowiedź układu z ręczniem dostrojonym regulatorem na zmienną wartość zadaną.}
+\end{figure}
+
+\section{Regulator DMC}
+Drugi rozważany regulator implementuje cyfrowy algorytm regulacji DMC w wersji analitycznej bez ograniczeń. Algorytm ten cechuje się tym że w procesie generacji sterowania, posługuje się modelem obiektu w postaci dyskretnych odpowiedzi skokowych postaci $\{s_1, s_2, s_3, ...\}$. Algorytm DMC jest algorytmem predykcyjnym a więc w każdej iteracji rozwiązywany jest problem optymalizacji błędu wyjścia.
+
+\begin{center}
+
+$\min_{\Delta u} = \bigg( \sum_{i=1}^{N}(y_{k+i|k}^{zad} - y_{k+i|k})^2 + \sum_{i=0}^{N_{u} - 1}\lambda(\Delta u_{k+i|k})^2 \bigg)$
+
+\end{center}
+
+W regulatorze DMC przewidywany jest wektor optymalnych sterowań na $N_u$ chwil w przód. Wartość $N_u$ nazywana jest horyzontem sterowania. Wektor ten obliczany jest na podstawie wartości zadanej, aktualnej wartości wyjścia procesu i zmianach sterowania w ostatnich $D-1$ chwilach dyskretnych. Wartość $D$ nazywana jest horyzontem dynamiki. Jego wartość mówi ile próbek dyskretnych musi minąć aby ustaliła się odpowiedź skokowa sterowanego obiektu działającego poza układem regulacji. Wartość wyjść jest przewidywana na $N$ chwil w przód. Wartość $N$ nazywana jest horyzontem predykcji i mówi o tym na ile chwil w przód przewidywane jest wyjście procesu a co za tym idzie ile próbek jest branych do zadania minimalizacji.\\
+\newpage
+
+Znając model procesu można z łatwością wyznaczyć prawo regulacji. Zanim jednak to nastąpi należy wyznaczyć dwie macierze związane z modelem. Pierwsza z nich to macierz skróconych odpowiedzi skokowych:
+
+$$
+\mathbf{M} =
+\left[ \begin{array}{ccccc}
+s_1 & 0 & \cdots & 0 & 0\\
+s_2 & s_1 & \cdots & 0 & 0\\
+\vdots & \vdots & \ddots & \vdots & \vdots  \\
+s_N & s_{N-1} & \cdots & s_{N - N_u + 2}& s_{N - N_u + 1}\\
+\end{array} \right]
+$$
+
+Drugą macierzą związaną z modelem jest macierz predykcji opisana wzorem:
+
+$$
+\mathbf{M^{P}} =
+\left[ \begin{array}{cccc}
+s_2 - s_1 & s_3 - s_2 & \cdots & s_D - s_{D-1}  \\
+s_3 - s_1 & s_4 - s_2 & \cdots & s_{D+1} - s_{D-1} \\
+\vdots & \vdots & \ddots &  \vdots \\
+s_{N+1} - s_1 & s_{N+2} - s_2 & \cdots & s_{N + D - 1} - s_{D-1}\\
+\end{array} \right]
+$$
+
+Na podstawie macierzy odpowiedzi skokowych należy wyznaczyć macierz $\mathbf{K}$:
+
+$$
+\mathbf{K} =
+\left[ \begin{array}{cccc}
+k_{1,1} & k_{1,2} & \cdots & k_{1,N} \\
+s_{2,1} & s_{2,2} & \cdots & k_{2,N} \\
+\vdots & \vdots & \ddots & \vdots  \\
+k_{N_u,1} & k_{N_u,2} & \cdots & k_{N_u,N}\\
+\end{array} \right]
+$$
+
+Analityczne prawo regulacji DMC ma postać:
+
+\begin{equation*}
+\Delta u_{k|k} = k^{e}(y_k^{zad} - y_k) -\sum_{j=1}^{D-1} k_j^u \Delta u_{k-j},
+\end{equation*}
+\begin{center}
+gdzie $k^{e} = \sum_{j=1}^{N} k_{1,j} $ i $
+K_{1}M^{P} =
+\left[ \begin{array}{cccc}
+k_{1}^u & k_{2}^u & \cdots & k_{D-1}^u \\
+\end{array} \right]
+$
+\end{center}
+
+\bigskip
+Cały algorytm regulacji DMC został zaimplementowany w skrypcie \texttt{/scripts/zad4\_{}dmc.m}. Do wyznaczania odpowiedzi skokowej zostało wykorzystane równanie róznicowe, badane w sekcji \texttt{Równanie różnicowe}.
 
 
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.70\textwidth]{../figures/zad4_dmc_l_1_N_80_Nu_80_D_80.pdf}
+\caption{Przykładowa odpowiedź regulatora DMC z parametrami $N = 80$, $N_u = 80$, $\lambda = 1$}
+\end{figure}
 
 
+\section{Badanie parametrów regulatora DMC}
 
-  
+
 
 \end{document}
