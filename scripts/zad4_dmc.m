@@ -36,8 +36,8 @@ odp_skok = step(Gz, 0:Tp:1.5*D);
 
 y_zad = zeros(1,kk);
 y_zad(D:kk) = 1;
-y_zad(200:kk) = 2;
-y_zad(400:kk) = 0;
+%y_zad(200:kk) = 2;
+%y_zad(400:kk) = 0;
 y=zeros(1,kk);
 u=zeros(1,kk);
 

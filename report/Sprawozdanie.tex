@@ -116,7 +116,7 @@ Analogicznie, współczynnik wzmocnienia statycznego transmitancji dyskretnej uz
 K_{stat_{d}} = \lim_{z\to 1} G(z)
 \end{equation*}
 
-Korzystając z otrzymanej transmitancji ciągłej otrzymałem $K_{stat_{c}} = 4.3$, natomiast korzystając z transmitancji dyskretnej obliczonej z matlaba również otrzymałem $K_{stat_{d}} = 4,3$. Wzmocnienia te są toższame z dokładnością do błędów numerycznych. Tożsamość dwóch współczynników była oczekiwana i tylko potwierdza zgodność obu opisów jednego procesu dynamicznego.
+Korzystając z otrzymanej transmitancji ciągłej otrzymałem $K_{stat_{c}} = 4,3$ a korzystając z transmitancji dyskretnej uzyskanej w matlaba również otrzymałem $K_{stat_{d}} = 4,3$. Wzmocnienia te są toższame. Tożsamość dwóch współczynników była oczekiwana i tylko potwierdza zgodność obu opisów jednego procesu dynamicznego.
 
 \section{Równanie różnicowe}
 Znając transmitancję dyskretną, z łatwością można wyznaczyć równanie różnicowe opisujące obiekt postaci:
@@ -166,6 +166,7 @@ PI & $0,45K_u$ & $0,83T_u$ & - \\
 PID & $0,6K_u$ & $0,5T_u$ & $0,12T_u$ \\
 \hline 
 \end{tabular}\\
+\medskip	
 Tabela 2.1 Nastawy regulatorów P, PI, PID.
 \end{center}
 \bigskip
@@ -179,7 +180,7 @@ Wzmocnienie krytyczne wyznaczałem iteracyjnie. Jeśli na skok jednostkowy, proc
 \end{figure}
 
 \newpage
-Przy zwiększaniu wzmocnienia, istniało ryzyko że możemy przekroczyć granicę stabilności. Objawiało się to rosnącymi oscylacjami.
+Przy zwiększaniu wzmocnienia, istniało ryzyko że możemy przekroczyć granicę stabilności. Objawiało się to rosnącymi oscylacjami. Rysunek 2.3 przedstawia odpowiedź dla układu regulacji z regulatorem P o wzmocnieniu $K_u = 0,6$
 
 \begin{figure}[H]
 \centering
@@ -214,7 +215,7 @@ Uzyskane nastawy dotyczą ciągłego układu regulacji opisanego wzorem:
 u(t) = K_p\bigg(e(t) + \int_{0}^{t}e(\tau)d\tau + \frac{de(t)}{dt}\bigg)
 \end{equation*}
 
-Dyskretny układ regulacji PID opisany jest wzorem:
+W ramach projektu interesujący jest dyskretny układ regulacji PID opisany  wzorem:
 \begin{equation*}
 u[k] = u[k-1] + r_1e[k] + r_2e[k-1] + r_3e[k-2]
 \end{equation*}
@@ -415,7 +416,7 @@ Horyzont predykcji jest parametrem który określa na ile chwil wprzód algorytm
 \caption{Regulator DMC - $\lambda = 1$, $N = 10$, $N_{u} = 10$}
 \end{figure}
 
-Tak jak widać na rysunkach 2.10 - 2.14, zmniejszanie horyzontu predykcji nie wpływa na jakość regulacji. Dopiero gdy horyzont predykcji przekroczy pewną wartość graniczną (w tym przypadku $N = 20$), jakość regulacji znacząco pogarsza się. Przebiegi zaczynają przyjmować charakter mocno oscylacyjny, pojawiają się duże przeregulowania. W przypadku krytycznym w którym długość horyzontu predykcji jest równa dyskretnemu opóźnieniu obiektu, regulator przestaje pracować. Im dłuższy jest horyzont predykcji tym większe zyski z opytmalizacji sterowania ale też dłuższe są obliczenia algorytmu ponieważ macierze modelu zwiększają swój wymiar. Dlatego w tym przypadku dobrze jest przyjąć wyznaczoną wartość graniczną parametru $N$. Na potrzeby dalszych eksperymentów zdecydowałem się na przyjęcie $N = 30$. 
+Tak jak widać na rysunkach 2.10 - 2.14, zmniejszanie horyzontu predykcji do pewnego momentu nie wpływa na jakość regulacji. Dopiero gdy horyzont predykcji przekroczy pewną wartość graniczną (w tym przypadku $N = 20$), jakość regulacji znacząco pogarsza się. Przebiegi zaczynają przyjmować charakter mocno oscylacyjny, pojawiają się duże przeregulowania. W przypadku krytycznym w którym długość horyzontu predykcji jest równa dyskretnemu opóźnieniu obiektu, regulator przestaje pracować. Im dłuższy jest horyzont predykcji tym większe zyski z opytmalizacji sterowania ale też dłuższe są obliczenia algorytmu ponieważ macierze modelu zwiększają swój wymiar. Dlatego w tym przypadku dobrze jest przyjąć wyznaczoną wartość graniczną parametru $N$. Na potrzeby dalszych eksperymentów zdecydowałem się na przyjęcie $N = 30$. 
 
 \subsection{Horyzont sterowania}
 Horyzont sterowania $N_u$ opisuje na ile chwil w przód obliczana jest wartość sygnału sterującego. Podobnie jak w przypadku horyzontu predykcji, zdecydowałem się na zbadanie jak ten parametr wpływa na jakość regulacji, stopniowo zmniejsząjąc jego wartość. 
